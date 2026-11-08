@@ -1,7 +1,6 @@
 """Сборка md-отчёта: снимок карты, затем награда, длина эпизода и fps"""
 
 SUMMARY_NAME = "summary.json"
-PLOTS_SUFFIX = "_plots"
 DEVICES = ("cpu", "cuda")
 COLORS = {"cpu": "#1f77b4", "cuda": "#d62728"}
 CHARTS = (
@@ -12,6 +11,7 @@ CHARTS = (
 
 import json
 import re
+import shutil
 from pathlib import Path
 
 import matplotlib
@@ -100,18 +100,27 @@ def _success_cell(row: dict | None) -> str:
     return "—"
 
 
-def _charts(root: Path, machine: str, ver: int, map_name: str, plots_dir: Path) -> list[str]:
+def _charts(root: Path, machine: str, ver: int, map_name: str) -> list[str]:
     lines: list[str] = []
     for filename, stem, xlabel, ylabel, caption in CHARTS:
         series = []
+        map_dirs: list[Path] = []
         for device in DEVICES:
-            xs, ys = _read_xy(root / f"{machine}_{device}_ver{ver}" / map_name / filename)
+            map_dir = root / f"{machine}_{device}_ver{ver}" / map_name
+            xs, ys = _read_xy(map_dir / filename)
             series.append((device, xs, ys))
-        image = plots_dir / f"{map_name}_{stem}.png"
-        if _save_chart(image, series, xlabel, ylabel):
-            lines.extend([f"![{caption}]({image.relative_to(root).as_posix()})", "", caption, ""])
-        else:
+            if map_dir.is_dir():
+                map_dirs.append(map_dir)
+        if not map_dirs or not any(xs for _, xs, _ in series):
             lines.extend([f"{caption} Нет данных.", ""])
+            continue
+        image = map_dirs[0] / f"{stem}.png"
+        if not _save_chart(image, series, xlabel, ylabel):
+            lines.extend([f"{caption} Нет данных.", ""])
+            continue
+        for map_dir in map_dirs[1:]:
+            shutil.copyfile(image, map_dir / image.name)
+        lines.extend([f"![{caption}]({image.relative_to(root).as_posix()})", "", caption, ""])
     return lines
 
 
@@ -167,7 +176,6 @@ def build_report(root: Path, machine: str, ver: int | None = None) -> Path:
         )
     lines.append("")
 
-    plots_dir = root / f"{machine}_ver{ver}{PLOTS_SUFFIX}"
     lines.extend(["## Карты", ""])
     for map_name in map_names:
         lines.extend([f"### {map_name}", ""])
@@ -176,7 +184,7 @@ def build_report(root: Path, machine: str, ver: int | None = None) -> Path:
             lines.extend([f"![{map_name}]({photo.relative_to(root).as_posix()})", ""])
         else:
             lines.extend(["Снимок карты не найден.", ""])
-        lines.extend(_charts(root, machine, ver, map_name, plots_dir))
+        lines.extend(_charts(root, machine, ver, map_name))
 
     report_path = root / f"{machine}_ver{ver}.md"
     report_path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")

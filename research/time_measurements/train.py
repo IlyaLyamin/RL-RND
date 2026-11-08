@@ -36,7 +36,6 @@ CHANGABLE_KEYS = frozenset({"device"})
 
 import logging
 import re
-import sys
 import time
 from pathlib import Path
 
@@ -47,7 +46,7 @@ import torch.nn as nn
 from minigrid.wrappers import ImgObsWrapper
 from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import BaseCallback
-from stable_baselines3.common.logger import HumanOutputFormat, KVWriter, Logger
+from stable_baselines3.common.logger import KVWriter, Logger
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
 RUN_DIR_NAME = re.compile(RUN_DIR_PATTERN)
@@ -312,12 +311,7 @@ def train(
     try:
         env = ImgObsWrapper(gym.make(map_name, max_steps=fixed["max_episode_steps"]))
         model = _build_model(env, device, seed)
-        model.set_logger(
-            Logger(
-                folder=str(map_dir),
-                output_formats=[HumanOutputFormat(sys.stdout), fps_writer],
-            )
-        )
+        model.set_logger(Logger(folder=str(map_dir), output_formats=[fps_writer]))
         if device == "cuda":
             torch.cuda.synchronize()
         started = time.perf_counter()
@@ -325,7 +319,6 @@ def train(
         if device == "cuda":
             torch.cuda.synchronize()
         elapsed = time.perf_counter() - started
-        model.save(str(map_dir / "model"))
         return elapsed, stats.success
     finally:
         stats.close()
