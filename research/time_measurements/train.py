@@ -1,9 +1,38 @@
 """Обучение PPO на одной карте MiniGrid.
 
 Внешняя программа вызывает :func:`train` отдельно для каждой карты
-и сама выбирает папку запуска. Функция возвращает время обучения в секундах
-и успех: агент хотя бы раз дошёл до цели.
+и сама выбирает папку запуска. Функция возвращает время до остановки
+и успех: не меньше ``N_SUCCESS`` попаданий в цель среди последних
+``SUCCESS_WINDOW`` эпизодов.
 """
+
+# Каждый N-й завершённый эпизод пишется в консоль.
+LOG_EVERY_EPISODES = 100
+# Длина вектора признаков свёрточной сети.
+FEATURES_DIM = 128
+# В каналах лежат индексы объектов, а не яркость пикселей.
+NORMALIZE_IMAGES = False
+# Параметры PPO.
+LEARNING_RATE = 3e-4
+N_STEPS = 2048
+BATCH_SIZE = 64
+N_EPOCHS = 10
+GAMMA = 0.99
+GAE_LAMBDA = 0.95
+CLIP_RANGE = 0.2
+ENT_COEF = 0.0
+VF_COEF = 0.5
+# Свёртки для картинки MiniGrid.
+CNN_CHANNELS = (16, 32, 64)
+CNN_KERNEL = 2
+# Успех запуска.
+N_SUCCESS = 8
+SUCCESS_WINDOW = 10
+# Имя папки запуска: desktop|laptop|server, затем cpu|cuda, затем ver и номер.
+RUN_DIR_PATTERN = r"^(desktop|laptop|server)_(cpu|cuda)_ver(\d+)$"
+# Обязательные ключи. Лишний или пропущенный ключ - ошибка.
+FIXED_KEYS = frozenset({"max_episode_steps", "total_timesteps", "no_improve_episodes"})
+CHANGABLE_KEYS = frozenset({"device"})
 
 import logging
 import re
@@ -21,27 +50,7 @@ from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.logger import HumanOutputFormat, KVWriter, Logger
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
-# Каждый N-й завершённый эпизод пишется в консоль.
-LOG_EVERY_EPISODES = 100
-# Длина вектора признаков свёрточной сети.
-FEATURES_DIM = 128
-# В каналах лежат индексы объектов, а не яркость пикселей.
-NORMALIZE_IMAGES = False
-# Параметры PPO
-LEARNING_RATE = 3e-4
-N_STEPS = 2048
-BATCH_SIZE = 64
-N_EPOCHS = 10
-GAMMA = 0.99
-GAE_LAMBDA = 0.95
-CLIP_RANGE = 0.2
-ENT_COEF = 0.0
-VF_COEF = 0.5
-# Имя папки запуска: desktop|laptop|server, затем cpu|cuda, затем ver и номер.
-RUN_DIR_NAME = re.compile(r"^(desktop|laptop|server)_(cpu|cuda)_ver(\d+)$")
-# Обязательные ключи. Лишний или пропущенный ключ - ошибка.
-FIXED_KEYS = frozenset({"max_episode_steps", "total_timesteps", "no_improve_episodes"})
-CHANGABLE_KEYS = frozenset({"device"})
+RUN_DIR_NAME = re.compile(RUN_DIR_PATTERN)
 
 logger = logging.getLogger("train")
 if not logger.handlers:
@@ -52,21 +61,26 @@ if not logger.handlers:
 logger.propagate = False
 
 
+def episode_success(goal_hits: list[bool]) -> bool:
+    """Успех, если в последних SUCCESS_WINDOW эпизодах не меньше N_SUCCESS целей."""
+    if len(goal_hits) < SUCCESS_WINDOW:
+        return False
+    return sum(goal_hits[-SUCCESS_WINDOW:]) >= N_SUCCESS
+
+
 class MinigridFeaturesExtractor(BaseFeaturesExtractor):
     """Свёртки для символической картинки MiniGrid 7×7."""
 
     def __init__(self, observation_space: gym.Space, features_dim: int = FEATURES_DIM) -> None:
         super().__init__(observation_space, features_dim)
-        n_input_channels = observation_space.shape[0]
-        self.cnn = nn.Sequential(
-            nn.Conv2d(n_input_channels, 16, kernel_size=2),
-            nn.ReLU(),
-            nn.Conv2d(16, 32, kernel_size=2),
-            nn.ReLU(),
-            nn.Conv2d(32, 64, kernel_size=2),
-            nn.ReLU(),
-            nn.Flatten(),
-        )
+        in_channels = observation_space.shape[0]
+        layers: list[nn.Module] = []
+        for out_channels in CNN_CHANNELS:
+            layers.append(nn.Conv2d(in_channels, out_channels, kernel_size=CNN_KERNEL))
+            layers.append(nn.ReLU())
+            in_channels = out_channels
+        layers.append(nn.Flatten())
+        self.cnn = nn.Sequential(*layers)
         with torch.no_grad():
             sample = torch.as_tensor(observation_space.sample()[None]).float()
             n_flatten = self.cnn(sample).shape[1]
@@ -111,7 +125,7 @@ class EpisodeStats(BaseCallback):
         self._best_reward = -float("inf")
         self._episodes_without_improvement = 0
         self._episode = 0
-        self.reached_goal = False
+        self._goal_hits: list[bool] = []
 
     def _on_step(self) -> bool:
         if not bool(self.locals["dones"][0]):
@@ -128,8 +142,7 @@ class EpisodeStats(BaseCallback):
         self._reward_file.flush()
         self._steps_file.flush()
 
-        if reward > 0:
-            self.reached_goal = True
+        self._goal_hits.append(reward > 0)
         if self._episode % LOG_EVERY_EPISODES == 0:
             logger.info("Эпизод %s завершён, reward %.6f", self._episode, reward)
 
@@ -154,6 +167,10 @@ class EpisodeStats(BaseCallback):
             self._reward_file.close()
         if not self._steps_file.closed:
             self._steps_file.close()
+
+    @property
+    def success(self) -> bool:
+        return episode_success(self._goal_hits)
 
 
 def _require_map_name(map_name: object) -> str:
@@ -232,11 +249,19 @@ def _require_device(changable_params: object, run_dir: str) -> str:
     return device
 
 
-def _build_model(env: gym.Env, device: str) -> PPO:
+def _require_seed(seed: object) -> int:
+    """Проверяет зерно генератора. Ноль допустим."""
+    if type(seed) is not int or seed < 0:
+        raise TypeError("seed должен быть целым числом >= 0")
+    return seed
+
+
+def _build_model(env: gym.Env, device: str, seed: int) -> PPO:
     """Собирает PPO с свёрточной сетью MiniGrid."""
     return PPO(
         "CnnPolicy",
         env,
+        seed=seed,
         device=device,
         learning_rate=LEARNING_RATE,
         n_steps=N_STEPS,
@@ -261,6 +286,7 @@ def train(
     run_dir: str,
     fixed_params: dict[str, int],
     changable_params: dict[str, str],
+    seed: int,
 ) -> tuple[float, bool]:
     """Обучает PPO на одной карте и пишет логи в ``run_dir/map_name``.
 
@@ -268,12 +294,14 @@ def train(
     :param run_dir: папка запуска, имя вида ``laptop_cuda_ver0``
     :param fixed_params: ``max_episode_steps``, ``total_timesteps``, ``no_improve_episodes``
     :param changable_params: ``device`` — ``cpu`` или ``cuda``
-    :return: время обучения в секундах и успех (агент дошёл до цели)
+    :param seed: общее зерно для всех карт и машин
+    :return: время до остановки в секундах и успех по последним эпизодам
     """
     map_name = _require_map_name(map_name)
     run_dir = _require_run_dir(run_dir)
     fixed = _require_fixed(fixed_params)
     device = _require_device(changable_params, run_dir)
+    seed = _require_seed(seed)
 
     map_dir = Path(run_dir) / map_name
     map_dir.mkdir(parents=True, exist_ok=True)
@@ -283,7 +311,7 @@ def train(
     model: PPO | None = None
     try:
         env = ImgObsWrapper(gym.make(map_name, max_steps=fixed["max_episode_steps"]))
-        model = _build_model(env, device)
+        model = _build_model(env, device, seed)
         model.set_logger(
             Logger(
                 folder=str(map_dir),
@@ -298,7 +326,7 @@ def train(
             torch.cuda.synchronize()
         elapsed = time.perf_counter() - started
         model.save(str(map_dir / "model"))
-        return elapsed, stats.reached_goal
+        return elapsed, stats.success
     finally:
         stats.close()
         if model is not None:
