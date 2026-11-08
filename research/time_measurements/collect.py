@@ -4,9 +4,12 @@ MACHINE = "desktop"
 SEED = 42
 DEVICES = ("cpu", "cuda")
 FIXED_PARAMS = {
-    "max_episode_steps": 512,
-    "total_timesteps": 200_000,
-    "no_improve_episodes": 100,
+    "max_episode_steps": 768,
+    "total_timesteps": 150_000,
+    "no_improve_episodes": 500,
+    "n_success": 7,
+    "success_window": 10,
+    "reward_delta": 0.02,
 }
 MAPS = (
     "MiniGrid-Empty-5x5-v0",
@@ -39,7 +42,7 @@ from pathlib import Path
 import torch
 
 from report import build_report
-from train import N_SUCCESS, SUCCESS_WINDOW, train
+from train import train
 
 ROOT = Path(__file__).resolve().parent
 
@@ -69,8 +72,6 @@ def _write_summary(path: Path, device: str, ver: int, rows: list[dict[str, objec
         "device": device,
         "ver": ver,
         "seed": SEED,
-        "n_success": N_SUCCESS,
-        "success_window": SUCCESS_WINDOW,
         "fixed_params": FIXED_PARAMS,
         "maps": rows,
     }
@@ -82,17 +83,18 @@ def _write_summary(path: Path, device: str, ver: int, rows: list[dict[str, objec
 
 def _train_map(run_dir: Path, device: str, map_name: str) -> dict[str, object]:
     if device == "cuda" and not torch.cuda.is_available():
-        return {"map": map_name, "seconds": None, "success": None, "error": "PyTorch не видит видеокарту"}
+        return {"map": map_name, "seconds": None, "goals": None, "counted": None, "error": "PyTorch не видит видеокарту"}
     try:
-        seconds, success = train(map_name, str(run_dir), FIXED_PARAMS, {"device": device}, SEED)
+        seconds, goals, counted = train(map_name, str(run_dir), FIXED_PARAMS, {"device": device}, SEED)
     except Exception as exc:
         return {
             "map": map_name,
             "seconds": None,
-            "success": None,
+            "goals": None,
+            "counted": None,
             "error": f"{type(exc).__name__}: {exc}",
         }
-    return {"map": map_name, "seconds": seconds, "success": success, "error": None}
+    return {"map": map_name, "seconds": seconds, "goals": goals, "counted": counted, "error": None}
 
 
 def _run_device(ver: int, device: str) -> None:
@@ -110,12 +112,13 @@ def _run_device(ver: int, device: str) -> None:
             logger.info("%s %s %s: %s", MACHINE, device, map_name, row["error"])
         else:
             logger.info(
-                "%s %s %s: %.1f с, успех %s",
+                "%s %s %s: %.1f с, цели %s из %s",
                 MACHINE,
                 device,
                 map_name,
                 row["seconds"],
-                "да" if row["success"] else "нет",
+                row["goals"],
+                row["counted"],
             )
 
 

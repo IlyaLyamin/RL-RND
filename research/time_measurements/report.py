@@ -88,16 +88,16 @@ def _time_cell(row: dict | None) -> str:
     return f"{float(row['seconds']):.1f}"
 
 
-def _success_cell(row: dict | None) -> str:
+def _goals_cell(row: dict | None) -> str:
     if row is None:
         return "—"
     if row.get("error"):
         return "ошибка"
-    if row.get("success") is True:
-        return "да"
-    if row.get("success") is False:
-        return "нет"
-    return "—"
+    goals = row.get("goals")
+    counted = row.get("counted")
+    if type(goals) is not int or type(counted) is not int:
+        return "—"
+    return f"{goals}/{counted}"
 
 
 def _charts(root: Path, machine: str, ver: int, map_name: str) -> list[str]:
@@ -151,11 +151,12 @@ def build_report(root: Path, machine: str, ver: int | None = None) -> Path:
             (
                 f"Лимит шагов эпизода: {fixed.get('max_episode_steps', '—')}. "
                 f"Бюджет шагов: {fixed.get('total_timesteps', '—')}. "
-                f"Остановка без роста награды: {fixed.get('no_improve_episodes', '—')} эпизодов."
+                f"Остановка, если награда не выросла больше чем на {fixed.get('reward_delta', '—')} "
+                f"за {fixed.get('no_improve_episodes', '—')} эпизодов."
             ),
             (
-                f"Успех: не меньше {summary.get('n_success', '—')} из последних "
-                f"{summary.get('success_window', '—')} эпизодов. "
+                f"Успех: не меньше {fixed.get('n_success', '—')} из последних "
+                f"{fixed.get('success_window', '—')} эпизодов. "
                 "В таблице время до этой остановки, в секундах."
             ),
             "",
@@ -164,15 +165,15 @@ def build_report(root: Path, machine: str, ver: int | None = None) -> Path:
     lines.extend([
         "## Время и успех",
         "",
-        "| Карта | CPU, с | CPU успех | CUDA, с | CUDA успех |",
+        "| Карта | CPU, с | CPU, цели | CUDA, с | CUDA, цели |",
         "| --- | ---: | --- | ---: | --- |",
     ])
     for map_name in map_names:
         cpu = by_device["cpu"].get(map_name)
         cuda = by_device["cuda"].get(map_name)
         lines.append(
-            f"| {map_name} | {_time_cell(cpu)} | {_success_cell(cpu)} | "
-            f"{_time_cell(cuda)} | {_success_cell(cuda)} |"
+            f"| {map_name} | {_time_cell(cpu)} | {_goals_cell(cpu)} | "
+            f"{_time_cell(cuda)} | {_goals_cell(cuda)} |"
         )
     lines.append("")
 
