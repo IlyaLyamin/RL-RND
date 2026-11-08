@@ -5,7 +5,7 @@ SEED = 42
 DEVICES = ("cpu", "cuda")
 FIXED_PARAMS = {
     "max_episode_steps": 768,
-    "total_timesteps": 150_000,
+    "total_timesteps": 1_000_000,
     "no_improve_episodes": 500,
     "n_success": 7,
     "success_window": 10,

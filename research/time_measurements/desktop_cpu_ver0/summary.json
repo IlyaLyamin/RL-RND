@@ -1,0 +1,156 @@
+{
+  "machine": "desktop",
+  "device": "cpu",
+  "ver": 0,
+  "seed": 42,
+  "fixed_params": {
+    "max_episode_steps": 768,
+    "total_timesteps": 1000000,
+    "no_improve_episodes": 500,
+    "n_success": 7,
+    "success_window": 10,
+    "reward_delta": 0.02
+  },
+  "maps": [
+    {
+      "map": "MiniGrid-Empty-5x5-v0",
+      "seconds": 18.328000699999393,
+      "goals": 10,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-Empty-16x16-v0",
+      "seconds": 73.27266640000016,
+      "goals": 10,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-Empty-Random-6x6-v0",
+      "seconds": 25.994594299998425,
+      "goals": 10,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-FourRooms-v0",
+      "seconds": 582.5103679999993,
+      "goals": 4,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-MultiRoom-N2-S4-v0",
+      "seconds": 42.70095450000008,
+      "goals": 10,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-MultiRoom-N6-v0",
+      "seconds": 511.0401105000019,
+      "goals": 0,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-SimpleCrossingS9N3-v0",
+      "seconds": 874.7774012000009,
+      "goals": 1,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-LavaGapS7-v0",
+      "seconds": 222.8859491999974,
+      "goals": 10,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-LavaCrossingS9N3-v0",
+      "seconds": 330.25146029999814,
+      "goals": 0,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-DistShift1-v0",
+      "seconds": 53.5415639999992,
+      "goals": 10,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-Dynamic-Obstacles-6x6-v0",
+      "seconds": 4.543631599997752,
+      "goals": 0,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-Dynamic-Obstacles-16x16-v0",
+      "seconds": 424.3108162000026,
+      "goals": 0,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-DoorKey-5x5-v0",
+      "seconds": 49.08617949999825,
+      "goals": 10,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-DoorKey-16x16-v0",
+      "seconds": 514.4643694999977,
+      "goals": 0,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-Unlock-v0",
+      "seconds": 101.51097759999902,
+      "goals": 10,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-KeyCorridorS3R3-v0",
+      "seconds": 825.3023657999984,
+      "goals": 0,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-BlockedUnlockPickup-v0",
+      "seconds": 514.1635816999988,
+      "goals": 0,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-ObstructedMaze-1Dlh-v0",
+      "seconds": 515.3791012000002,
+      "goals": 0,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-RedBlueDoors-6x6-v0",
+      "seconds": 981.3680319999985,
+      "goals": 0,
+      "counted": 10,
+      "error": null
+    },
+    {
+      "map": "MiniGrid-MemoryS7-v0",
+      "seconds": 45.67467789999864,
+      "goals": 4,
+      "counted": 10,
+      "error": null
+    }
+  ]
+}
