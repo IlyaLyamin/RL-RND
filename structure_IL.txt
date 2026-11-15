@@ -1,0 +1,401 @@
+﻿RL-RND
+|   .gitignore
+|   LICENSE
+|   README.md
+|   structure.txt
+|   
+\---research
+    \---time_measurements
+        |   collect.py
+        |   desktop_ver0.md
+        |   report.py
+        |   train.py
+        |   
+        +---desktop_cpu_ver0
+        |   |   summary.json
+        |   |   
+        |   +---MiniGrid-BlockedUnlockPickup-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-DistShift1-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-DoorKey-16x16-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-DoorKey-5x5-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-Dynamic-Obstacles-16x16-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-Dynamic-Obstacles-6x6-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-Empty-16x16-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-Empty-5x5-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-Empty-Random-6x6-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-FourRooms-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-KeyCorridorS3R3-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-LavaCrossingS9N3-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-LavaGapS7-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-MemoryS7-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-MultiRoom-N2-S4-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-MultiRoom-N6-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-ObstructedMaze-1Dlh-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-RedBlueDoors-6x6-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-SimpleCrossingS9N3-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   \---MiniGrid-Unlock-v0
+        |           best_model.zip
+        |           fps.png
+        |           fps.txt
+        |           reward.png
+        |           reward.txt
+        |           steps.png
+        |           steps_per_ep.txt
+        |           
+        +---desktop_cuda_ver0
+        |   |   summary.json
+        |   |   
+        |   +---MiniGrid-BlockedUnlockPickup-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-DistShift1-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-DoorKey-16x16-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-DoorKey-5x5-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-Dynamic-Obstacles-16x16-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-Dynamic-Obstacles-6x6-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-Empty-16x16-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-Empty-5x5-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-Empty-Random-6x6-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-FourRooms-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-KeyCorridorS3R3-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-LavaCrossingS9N3-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-LavaGapS7-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-MemoryS7-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-MultiRoom-N2-S4-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-MultiRoom-N6-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-ObstructedMaze-1Dlh-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-RedBlueDoors-6x6-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   +---MiniGrid-SimpleCrossingS9N3-v0
+        |   |       best_model.zip
+        |   |       fps.png
+        |   |       fps.txt
+        |   |       reward.png
+        |   |       reward.txt
+        |   |       steps.png
+        |   |       steps_per_ep.txt
+        |   |       
+        |   \---MiniGrid-Unlock-v0
+        |           best_model.zip
+        |           fps.png
+        |           fps.txt
+        |           reward.png
+        |           reward.txt
+        |           steps.png
+        |           steps_per_ep.txt
+        |           
+        \---maps
+                MiniGrid-BlockedUnlockPickup-v0.png
+                MiniGrid-DistShift1-v0.png
+                MiniGrid-DoorKey-16x16-v0.png
+                MiniGrid-DoorKey-5x5-v0.png
+                MiniGrid-Dynamic-Obstacles-16x16-v0.png
+                MiniGrid-Dynamic-Obstacles-6x6-v0.png
+                MiniGrid-Empty-16x16-v0.png
+                MiniGrid-Empty-5x5-v0.png
+                MiniGrid-Empty-Random-6x6-v0.png
+                MiniGrid-FourRooms-v0.png
+                MiniGrid-KeyCorridorS3R3-v0.png
+                MiniGrid-LavaCrossingS9N3-v0.png
+                MiniGrid-LavaGapS7-v0.png
+                MiniGrid-MemoryS7-v0.png
+                MiniGrid-MultiRoom-N2-S4-v0.png
+                MiniGrid-MultiRoom-N6-v0.png
+                MiniGrid-ObstructedMaze-1Dlh-v0.png
+                MiniGrid-RedBlueDoors-6x6-v0.png
+                MiniGrid-SimpleCrossingS9N3-v0.png
+                MiniGrid-Unlock-v0.png
+                
