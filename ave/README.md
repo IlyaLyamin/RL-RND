@@ -148,20 +148,6 @@ python collect.py --rnd    # RND, 3 карты × cpu/cuda
 - Вставить в отчёт: главный тезис (KeyCorridor), контроль (MultiRoom), цену (×1.7–2.2), оговорки (Путь B, `r_int` clip, `best_model` по `r_ext`, фикс шага 1).
 - `intrinsic_reward.txt` — таблицей/скриншотом (график `r_int` — опционально, неделя 3–4).
 
-### README (5–10 строк)
-
-Черновик готов (в предыдущем сообщении). Вставить:
-
-- Как запустить baseline (`use_rnd=false`) и RND (`use_rnd=true, rnd_beta=0.1`).
-- Где логи (`<run_dir>/<map>/reward.txt`, `steps_per_ep.txt`, `fps.txt`, `intrinsic_reward.txt`, `rnd_module.pt`).
-- Упрощения относительно статьи: одна value-голова, `r = r_ext + β·r_int`, без раздельных GAE, `r_int` clip `[-5, 5]`.
-
-### На неделю 3–4 (если успеем)
-
-- **Путь A**: кастомная `ActorCriticPolicy` с двумя value-головами (`v_ext`, `v_int`) и раздельными GAE. Абляция «две головы vs одна» — сравнить на `KeyCorridorS3R3`.
-- **`r_int` в `report.py`** — добавить `("intrinsic_reward.txt", "r_int", "эпизод", "Σ r_int_scaled", ...)` в `CHARTS` (с оговоркой, что формат 4-колоночный — надо адаптировать `_read_xy`).
-- **CUDA-прогон** — если есть GPU; если нет, зафиксировать в отчёте «CPU-only, GPU не даёт выигрыша (узкое место среда)».
-
 ---
 
 ## 7. Оговорки для отчёта (готовые формулировки)
@@ -174,19 +160,6 @@ python collect.py --rnd    # RND, 3 карты × cpu/cuda
 
 ---
 
-## 8. Для следующего чата (краткий контекст)
-
-Если продолжаешь работу в новом чате, скопируй этот блок:
-
-> **Проект**: RND (Burda et al., 2018) на MiniGrid, Путь B. Baseline PPO (SB3) + RND во wrapper'е, `r = r_ext + β·r_int`, одна value-голова.
-> **Файлы**: `src/rnd/{running_mean_std,rnd_module,wrapper}.py`, `tests/test_rnd.py`, правки в `train.py`/`collect.py`. `report.py` не трогали.
-> **Главный результат**: KeyCorridorS3R3 — baseline `0/100`, RND `100/100`; MultiRoom — оба `100/100` (контроль); DoorKey — baseline `7/100`, RND `100/100`.
-> **Технический долг**: (1) не применён фикс `RunningMeanStd.normalize` (`count < 2` → return as-is) — из-за этого `reward.txt` эпизод 1 = `57` вместо `~1–10`; (2) `intrinsic_reward.txt` не рисуется в `report.py`; (3) полный `collect.py` не прогонялся (снизить `total_timesteps` до `200_000`).
-> **Следующие шаги**: применить фикс шага 1 → `pytest` → перезапустить 3 RND-прогона → `collect.py` / `collect.py --rnd` → `report.py` → README. Неделя 3–4: Путь A (две головы), `r_int` в `report.py`.
-> **Ограничения**: кастомная policy — только Путь A; 17 карт не трогать (только `ACTIVE_MAPS`); гиперпараметры PPO не менять; reward shaping не добавлять.
-
----
-
-## 9. Итог одной строкой
+## 8. Итог одной строкой
 
 **RND по Пути B реализован и воспроизводит ключевой тезис статьи**: на `KeyCorridorS3R3` PPO без novelty не находит цель (`0/100`), а PPO + RND — `100/100`; на лёгкой `MultiRoom` оба `100/100` (контроль). DoD закрыт на 4/5, осталось: фикс шага 1 (2 строки), полный `collect.py` (1–2 часа), README (5 минут), сведение отчёта (2–3 часа). На неделе 1 из 4 — **~70% Пути B**, главный результат получен.

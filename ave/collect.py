@@ -12,7 +12,7 @@ DEVICES = ("cpu", "cuda")
 # Параметры baseline. Для RND-прогона main(run_rnd=True) добавит RND-ключи.
 FIXED_PARAMS = {
     "max_episode_steps": 768,
-    "total_timesteps": 1_000_000,
+    "total_timesteps": 200_000,
     "no_improve_episodes": 500,
     "n_success": 7,
     "success_window": 10,

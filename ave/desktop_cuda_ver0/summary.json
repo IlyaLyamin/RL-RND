@@ -1,0 +1,46 @@
+{
+  "machine": "desktop",
+  "device": "cuda",
+  "ver": 0,
+  "seed": 42,
+  "fixed_params": {
+    "max_episode_steps": 768,
+    "total_timesteps": 200000,
+    "no_improve_episodes": 500,
+    "n_success": 7,
+    "success_window": 10,
+    "reward_delta": 0.02
+  },
+  "rnd_params": {
+    "use_rnd": true,
+    "rnd_feature_dim": 128,
+    "rnd_lr": 0.0001,
+    "rnd_beta": 0.1,
+    "rnd_beta_decay": 1.0,
+    "rnd_beta_min": 0.0,
+    "rnd_update_every": 1
+  },
+  "maps": [
+    {
+      "map": "MiniGrid-MultiRoom-N2-S4-v0",
+      "seconds": null,
+      "goals": null,
+      "counted": null,
+      "error": "PyTorch не видит видеокарту"
+    },
+    {
+      "map": "MiniGrid-KeyCorridorS3R3-v0",
+      "seconds": null,
+      "goals": null,
+      "counted": null,
+      "error": "PyTorch не видит видеокарту"
+    },
+    {
+      "map": "MiniGrid-DoorKey-5x5-v0",
+      "seconds": null,
+      "goals": null,
+      "counted": null,
+      "error": "PyTorch не видит видеокарту"
+    }
+  ]
+}
